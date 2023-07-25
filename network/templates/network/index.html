@@ -4,10 +4,9 @@
     <div class="container">
         {% if user.is_authenticated %}
             <div class="new-post d-flex justify-content-center">
-                <form class="form" action="{% url 'new_post' %}" method="post" id="new-post-form">
-                    {% csrf_token %}
+                <form class="form" id="new-post-form">
                     <h5>New Post</h5>
-                    <textarea rows="4" name="new-post-body"></textarea>
+                    <textarea rows="4" id="new-post-body"></textarea>
                     <br>
                     <button class="btn btn-primary" type="submit" id="submit-post">Post</button>
                 </form>

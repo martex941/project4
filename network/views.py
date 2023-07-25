@@ -1,9 +1,11 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+
 from django.db import IntegrityError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import User, Post, Like, Follow
 
@@ -11,19 +13,14 @@ from .models import User, Post, Like, Follow
 def index(request):
     return render(request, "network/index.html")
 
-@login_required
+
+@csrf_exempt
 def new_post(request):
-    if request.method == "POST":
-        username = request.user
-        body = request.POST.get("new-post-body")
+    username = request.user
+    body = request.POST.get("new-post-body")
 
-        new_post = Post(creator=username, body=body)
-        new_post.save()
-
-        return HttpResponseRedirect(reverse("index"))
-    
-def timeline(request):
-    
+    new_post = Post(creator=username, body=body)
+    new_post.save()
 
 
 
