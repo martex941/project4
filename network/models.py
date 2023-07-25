@@ -8,7 +8,7 @@ class User(AbstractUser):
 
 class Post(models.Model):
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name="post_creator", default="")
-    body = models.CharField(max_length=250)
+    body = models.CharField(max_length=250, default="")
     timestamp = models.DateTimeField(default=timezone.now, editable=False)
     likes = models.PositiveIntegerField(default=0)
 

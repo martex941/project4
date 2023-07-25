@@ -1,0 +1,33 @@
+.container {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    border-left: black 1px solid;
+    border-right: black 1px solid;
+    width: 50%;
+}
+
+.new-post {
+    border-bottom: black 1px solid;
+}
+
+form {
+    padding: 1rem;
+    width: 100%;
+}
+
+.post {
+    width: auto;
+    border: black 1px solid;
+    border-radius: 10px;
+}
+
+textarea {
+    border-radius: 10px;
+    resize: none;
+    width: 100%;
+}
+
+.navbar {
+    margin-left: 1rem;
+}

@@ -1,5 +1,21 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
-    TODO
+    <div class="container">
+        {% if user.is_authenticated %}
+            <div class="new-post d-flex justify-content-center">
+                <form class="form" action="{% url 'new_post' %}" method="post" id="new-post-form">
+                    {% csrf_token %}
+                    <h5>New Post</h5>
+                    <textarea rows="4" name="new-post-body"></textarea>
+                    <br>
+                    <button class="btn btn-primary" type="submit" id="submit-post">Post</button>
+                </form>
+            </div>
+        {% endif %}
+        
+        <div class="timeline" id="timeline-feed">
+            <h1>THIS IS THE TIMELINE</h1>
+        </div>
+    </div>
 {% endblock %}

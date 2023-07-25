@@ -1,14 +1,40 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User
+from .models import User, Post, Like, Follow
 
 
 def index(request):
     return render(request, "network/index.html")
+
+@login_required
+def new_post(request):
+    if request.method == "POST":
+        username = request.user
+        body = request.POST.get("new-post-body")
+
+        new_post = Post(creator=username, body=body)
+        new_post.save()
+
+        return HttpResponseRedirect(reverse("index"))
+    
+def timeline(request):
+    
+
+
+
+@login_required
+def profile(request, username):
+    return render(request, "network/profile.html")
+
+
+@login_required
+def following(request):
+    return render(request, "network/following.html")
 
 
 def login_view(request):
