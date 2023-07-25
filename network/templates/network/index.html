@@ -1,10 +1,17 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            new_post();
+            timeline();
+        });
+    </script>
     <div class="container">
         {% if user.is_authenticated %}
             <div class="new-post d-flex justify-content-center">
                 <form class="form" id="new-post-form">
+                    {% csrf_token %}
                     <h5>New Post</h5>
                     <textarea rows="4" id="new-post-body"></textarea>
                     <br>
