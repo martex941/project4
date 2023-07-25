@@ -1,6 +1,8 @@
 import json
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.core.serializers.json import DjangoJSONEncoder
+from django.forms.models import model_to_dict
 from django.db import IntegrityError
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
@@ -16,6 +18,9 @@ def index(request):
 
 @login_required
 def new_post(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required."}, status=400)
+    
     data = json.loads(request.body)
     username = request.user
     body = data.get("body", "")
@@ -26,6 +31,21 @@ def new_post(request):
 
     return JsonResponse({"message": "Everything went fine."}, status=201)
 
+
+def timeline(request):
+    posts = Post.objects.all().order_by("-timestamp")
+
+    # Create a list of dictionaries representing the Post objects
+    posts_data = [
+        {
+            'username': post.creator.username,
+            'body': post.body,
+            'timestamp': post.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+        }
+        for post in posts
+    ]
+
+    return JsonResponse(posts_data, safe=False)
 
 
 @login_required

@@ -1,5 +1,5 @@
 function timeline() {
-    fetch('')
+    fetch("timeline")
     .then(response => response.json())
     .then(posts => {
         console.log(posts);
@@ -10,6 +10,7 @@ function timeline() {
             `
             <h5 class="post-creator">${element.username}</h5>
             <p class="post-body">${element.body}</p>
+            <hr>
             <span class="post-timestamp">${element.timestamp}</span>
             `;
             document.querySelector("#timeline-feed").append(post_div);

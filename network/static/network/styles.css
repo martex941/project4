@@ -9,6 +9,7 @@
 
 .new-post {
     border-bottom: black 1px solid;
+    margin-bottom: 1rem;
 }
 
 form {
@@ -17,6 +18,8 @@ form {
 }
 
 .post {
+    padding: 1rem;
+    margin: 0.5rem;
     width: auto;
     border: black 1px solid;
     border-radius: 10px;
