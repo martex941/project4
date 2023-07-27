@@ -1,5 +1,50 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
+    <style>
+        .container {
+            border-left: none;
+            border-right: none;
+        }
+        
+        .profile_post {
+            margin: 0;
+            margin-bottom: 1rem;
+        }
+    </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            follow();
+        });
+    </script>
+    <div class="container">
+        <div class="profile-container">
+            <h2 id="profile-username" data-name="{{ user }}">{{ user }}'s profile</h2>
+            <h2>{{ followers }} followers</h2>
+            {% if already_following %}
+                <button class="btn btn-secondary" id="unfollow-btn">Unfollow</button>
+            {% else %}
+                <button class="btn btn-primary" id="follow-btn">Follow</button>
+            {% endif %}
+        </div>
+        <hr>
+        <div class="profile-posts">
+            <h3>{{ user }}'s posts:</h3>
+            {% for post in user_posts %}
+                <div class="profile_post">
+                    <h5 class="post-creator">{{ post.creator }}</h5>
+                    <p class="post-body">{{ post.body }}</p>
+                    <hr>
+                    <div class="row">
+                        <span class="col post-timestamp">{{ post.timestamp }}</span>
+                        <div class="col post-like">
+                            <h5 class="text-lead">{{ post.likes }} likes</h5>
+                            <button class="btn btn-primary like-btn">Like</button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor%}
+        </div>
+    </div>
     
 {% endblock %}

@@ -24,12 +24,11 @@ def new_post(request):
     data = json.loads(request.body)
     username = request.user
     body = data.get("body", "")
-    print(body)
 
     new_post = Post(creator=username, body=body)
     new_post.save()
 
-    return JsonResponse({"message": "Everything went fine."}, status=201)
+    return JsonResponse({"message": "Post created."}, status=201)
 
 
 def timeline(request):
@@ -44,17 +43,55 @@ def timeline(request):
         }
         for post in posts
     ]
-
     return JsonResponse(posts_data, safe=False)
+
+@csrf_exempt
+@login_required
+def follow(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required."}, status=400)
+    
+    data = json.loads(request.body)
+    username = request.user
+    body = data.get("followee", "")
+    new_follow = Follow(follower=username, followee=body)
+    new_follow.save()
+
+
+    return JsonResponse({"message": "Followed."}, status=201)
 
 
 @login_required
 def profile(request, username):
-    return render(request, "network/profile.html")
+
+    # Obtain username and their posts
+    user_info = User.objects.get(username=username)
+    user_posts = Post.objects.filter(creator=user_info.id)
+
+    # Obtain amount of followers the user has got
+    followers = Follow.objects.filter(followee=user_info.id)
+    followers_count = followers.count()
+
+    # Check whether the user visiting the profile already follows that person
+    already_following = False
+    current_user = request.user
+    try:
+        Follow.objects.get(followee=user_info.id, follower=current_user)
+        already_following = True
+    except Follow.DoesNotExist:
+        pass
+
+    return render(request, "network/profile.html", {
+        "user": user_info,
+        "user_posts": user_posts,
+        "followers": followers_count,
+        "already_following": already_following
+    })
 
 
 @login_required
 def following(request):
+
     return render(request, "network/following.html")
 
 

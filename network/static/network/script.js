@@ -8,14 +8,40 @@ function timeline() {
             post_div.className = 'post';
             post_div.innerHTML =
             `
-            <h5 class="post-creator">${element.username}</h5>
+            <a href="/profile/${element.username}"><h5 class="post-creator">${element.username}</h5></a>
             <p class="post-body">${element.body}</p>
             <hr>
-            <span class="post-timestamp">${element.timestamp}</span>
+            <div class="row">
+                <span class="col post-timestamp">${element.timestamp}</span>
+                <div class="col post-like">
+                    <h5 class="text-lead">${element.likes} likes</h5>
+                    <button class="btn btn-primary like-btn">Like</button>
+                </div>
+            </div>
             `;
             document.querySelector("#timeline-feed").append(post_div);
         });
     });           
+}
+
+function follow() {
+    document.querySelector("#follow-btn").addEventListener('click', () => {
+        const followee = document.querySelector("#profile-username").dataset.name;
+
+        fetch("follow", {
+            method: "POST",
+            body: JSON.stringify({
+                followee: followee
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+        })
+        .catch(error => {
+            console.error(error);
+        });
+    })
 }
 
 function new_post() {

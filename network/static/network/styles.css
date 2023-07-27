@@ -7,6 +7,12 @@
     width: 50%;
 }
 
+.profile-container {
+    border: black 1px solid;
+    border-radius: 10px;
+    margin-bottom: 5rem;
+}
+
 .new-post {
     border-bottom: black 1px solid;
     margin-bottom: 1rem;
@@ -17,12 +23,26 @@ form {
     width: 100%;
 }
 
-.post {
+.post, .profile_post {
     padding: 1rem;
     margin: 0.5rem;
     width: auto;
     border: black 1px solid;
     border-radius: 10px;
+}
+
+.profile-container {
+    padding: 1rem;
+}
+
+.post-like {
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+}
+
+.like-btn {
+    margin-left: 0.5rem;
 }
 
 textarea {
@@ -31,6 +51,16 @@ textarea {
     width: 100%;
 }
 
-.navbar {
+.timeline a {
+    text-decoration: none;
+}
+
+.navbar-brand {
     margin-left: 1rem;
+}
+
+@media (max-width: 991px) {
+    .nav-item {
+        margin-left: 1rem;
+    }
 }
