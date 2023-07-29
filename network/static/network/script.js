@@ -1,5 +1,5 @@
-function timeline() {
-    fetch("timeline")
+function timeline(url) {
+    fetch(`${url}`)
     .then(response => response.json())
     .then(posts => {
         console.log(posts);
@@ -26,10 +26,23 @@ function timeline() {
 
 function follow() {
     document.querySelector("#follow-btn").addEventListener('click', () => {
+
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+          }
+        
+          const csrftoken = getCookie('csrftoken');
+
         const followee = document.querySelector("#profile-username").dataset.name;
 
         fetch("follow", {
             method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken
+            },
             body: JSON.stringify({
                 followee: followee
             })

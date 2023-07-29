@@ -19,17 +19,22 @@
     </script>
     <div class="container">
         <div class="profile-container">
-            <h2 id="profile-username" data-name="{{ user }}">{{ user }}'s profile</h2>
+            <h2 id="profile-username" data-name="{{ profile_username }}">{{ profile_username }}'s profile</h2>
             <h2>{{ followers }} followers</h2>
-            {% if already_following %}
-                <button class="btn btn-secondary" id="unfollow-btn">Unfollow</button>
+            <h2>Following: {{ followees_count }} </h2>
+            {% if profile_username == user %}
+            <!-- No button -->
             {% else %}
-                <button class="btn btn-primary" id="follow-btn">Follow</button>
+                {% if already_following %}
+                    <button class="btn btn-secondary" id="unfollow-btn">Unfollow</button>
+                {% else %}
+                    <button class="btn btn-primary" id="follow-btn">Follow</button>
+                {% endif %}
             {% endif %}
         </div>
         <hr>
         <div class="profile-posts">
-            <h3>{{ user }}'s posts:</h3>
+            <h3>{{ profile_username }}'s posts:</h3>
             {% for post in user_posts %}
                 <div class="profile_post">
                     <h5 class="post-creator">{{ post.creator }}</h5>

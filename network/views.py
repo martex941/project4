@@ -39,13 +39,14 @@ def timeline(request):
         {
             'username': post.creator.username,
             'body': post.body,
+            'likes': post.likes,
             'timestamp': post.timestamp.strftime('%Y-%m-%d %H:%M:%S')
         }
         for post in posts
     ]
     return JsonResponse(posts_data, safe=False)
 
-@csrf_exempt
+
 @login_required
 def follow(request):
     if request.method != "POST":
@@ -68,9 +69,11 @@ def profile(request, username):
     user_info = User.objects.get(username=username)
     user_posts = Post.objects.filter(creator=user_info.id)
 
-    # Obtain amount of followers the user has got
+    # Obtain amount of followers the user has got and how many people the user follows
     followers = Follow.objects.filter(followee=user_info.id)
+    followees = Follow.objects.filter(follower=user_info.id)
     followers_count = followers.count()
+    followees_count = followees.count()
 
     # Check whether the user visiting the profile already follows that person
     already_following = False
@@ -82,15 +85,34 @@ def profile(request, username):
         pass
 
     return render(request, "network/profile.html", {
-        "user": user_info,
+        "profile_username": user_info,
         "user_posts": user_posts,
         "followers": followers_count,
+        "followees_count": followees_count,
         "already_following": already_following
     })
 
 
 @login_required
 def following(request):
+    followees = Follow.objects.filter(follower=request.user.id)
+    print(followees)
+    followees_array = []
+    for user in followees_array:
+        followees_array += user.followee
+    print(followees_array)
+
+    posts = Post.objects.all().order_by("-timestamp")
+
+    # Create a list of dictionaries representing the Post objects
+    posts_data = [
+        {
+            'username': post.creator.username,
+            'body': post.body,
+            'timestamp': post.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+        }
+        for post in posts
+    ]
 
     return render(request, "network/following.html")
 
