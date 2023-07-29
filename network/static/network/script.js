@@ -1,3 +1,9 @@
+function getCsrf(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
 function timeline(url) {
     fetch(`${url}`)
     .then(response => response.json())
@@ -24,38 +30,71 @@ function timeline(url) {
     });           
 }
 
-function follow() {
-    document.querySelector("#follow-btn").addEventListener('click', () => {
-
-        function getCookie(name) {
-            const value = `; ${document.cookie}`;
-            const parts = value.split(`; ${name}=`);
-            if (parts.length === 2) return parts.pop().split(';').shift();
-          }
-        
-          const csrftoken = getCookie('csrftoken');
-
-        const followee = document.querySelector("#profile-username").dataset.name;
-
-        fetch("follow", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": csrftoken
-            },
-            body: JSON.stringify({
-                followee: followee
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-        })
-        .catch(error => {
-            console.error(error);
-        });
-    })
+function following_switch() {
+    const following_check = document.querySelector("#following-check").dataset.following;
+    console.log(following_check);
+    if (following_check === "True") {
+        document.querySelector("#follow-btn").style.display = 'none';
+        document.querySelector("#unfollow-btn").style.display = 'block';
+    }
+    else if (following_check === "False") {
+        document.querySelector("#follow-btn").style.display = 'block';
+        document.querySelector("#unfollow-btn").style.display = 'none';
+    }
 }
+
+function follow() {
+    const csrftoken = getCsrf('csrftoken');
+    const followee = document.querySelector("#profile-username").dataset.name;
+
+    fetch("follow", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrftoken
+        },
+        body: JSON.stringify({
+            followee: followee
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+    })
+    .catch(error => {
+        console.error(error);
+    });
+    setTimeout(() => {
+        location.reload();
+    }, 50);
+}
+
+function unfollow() {
+    const csrftoken = getCsrf('csrftoken');
+    const followee = document.querySelector("#profile-username").dataset.name;
+
+    fetch("unfollow", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrftoken
+        },
+        body: JSON.stringify({
+            followee: followee
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+    })
+    .catch(error => {
+        console.error(error);
+    });
+    setTimeout(() => {
+        location.reload();
+    }, 50);
+}
+
 
 function new_post() {
     document.querySelector("#new-post-form").onsubmit = (event) => {

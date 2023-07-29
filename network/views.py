@@ -53,13 +53,28 @@ def follow(request):
         return JsonResponse({"error": "POST request required."}, status=400)
     
     data = json.loads(request.body)
-    username = request.user
+    current_user = request.user
     body = data.get("followee", "")
-    new_follow = Follow(follower=username, followee=body)
+    followed_user = User.objects.get(username=body)
+    new_follow = Follow(follower=current_user, followee=followed_user)
     new_follow.save()
 
-
     return JsonResponse({"message": "Followed."}, status=201)
+
+@login_required
+def unfollow(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required."}, status=400)
+    
+    data = json.loads(request.body)
+    current_user = request.user
+    body = data.get("followee", "")
+    followed_user = User.objects.get(username=body)
+    unfollowing = Follow.objects.get(follower=current_user, followee=followed_user)
+    print(unfollowing)
+    unfollowing.delete()
+
+    return JsonResponse({"message": "Unfollowed."}, status=201)
 
 
 @login_required
