@@ -84,9 +84,8 @@ def unfollow(request):
 @login_required
 def profile(request, username):
 
-    # Obtain username and their posts
+    # Obtain username
     user_info = User.objects.get(username=username)
-    user_posts = Post.objects.filter(creator=user_info.id)
 
     # Obtain amount of followers the user has got and how many people the user follows
     followers = Follow.objects.filter(followee=user_info.id)
@@ -105,11 +104,29 @@ def profile(request, username):
 
     return render(request, "network/profile.html", {
         "profile_username": user_info,
-        "user_posts": user_posts,
         "followers": followers_count,
         "followees_count": followees_count,
         "already_following": already_following
     })
+
+@login_required
+def profile_feed(request, username):
+
+    profile_user = User.objects.get(username=username)
+    posts = Post.objects.filter(creator=profile_user.id).order_by("-timestamp")
+
+    # Create a list of dictionaries representing the Post objects
+    posts_data = [
+        {
+            'username': post.creator.username,
+            'body': post.body,
+            'likes': post.likes,
+            'timestamp': post.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+        }
+        for post in posts
+    ]
+
+    return JsonResponse(posts_data, safe=False)
 
 
 @login_required
@@ -123,7 +140,7 @@ def following_feed(request):
     for user in followees:
         followees_array.append(user.followee)
 
-    posts = Post.objects.all().filter(creator__in=followees_array).order_by("-timestamp")
+    posts = Post.objects.filter(creator__in=followees_array).order_by("-timestamp")
 
     # Create a list of dictionaries representing the Post objects
     posts_data = [

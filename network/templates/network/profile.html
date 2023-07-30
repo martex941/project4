@@ -14,6 +14,9 @@
     </style>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
+            const username = document.querySelector("#profile-username").dataset.name;
+            timeline(`profile_feed/${username}`)
+
             following_switch();
         });
     </script>
@@ -31,22 +34,7 @@
             {% endif %}
         </div>
         <hr>
-        <div class="profile-posts">
-            <h3>{{ profile_username }}'s posts:</h3>
-            {% for post in user_posts %}
-                <div class="profile_post">
-                    <h5 class="post-creator">{{ post.creator }}</h5>
-                    <p class="post-body">{{ post.body }}</p>
-                    <hr>
-                    <div class="row">
-                        <span class="col post-timestamp">{{ post.timestamp }}</span>
-                        <div class="col post-like">
-                            <h5 class="text-lead">{{ post.likes }} likes</h5>
-                            <button class="btn btn-primary like-btn">Like</button>
-                        </div>
-                    </div>
-                </div>
-            {% endfor%}
+        <div class="timeline" id="timeline-feed">
         </div>
     </div>
 {% endblock %}
