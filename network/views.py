@@ -76,10 +76,6 @@ def unfollow(request):
 
     return JsonResponse({"message": "Unfollowed."}, status=201)
 
-# @login_required
-# def like(request):
-#     likes = Like.objects.
-
 
 @login_required
 def profile(request, username):

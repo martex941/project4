@@ -21,7 +21,8 @@ function timeline(url) {
                 <span class="col post-timestamp">${element.timestamp}</span>
                 <div class="col post-like">
                     <h5 class="text-lead">${element.likes} likes</h5>
-                    <button class="btn btn-primary like-btn">Like</button>
+                    <button class="btn btn-primary like-btn" id="like-btn">Like</button>
+                    <button class="btn btn-primary dislike-btn" id="dislike-btn">Dislike</button>
                 </div>
             </div>
             `;
