@@ -76,6 +76,10 @@ def unfollow(request):
 
     return JsonResponse({"message": "Unfollowed."}, status=201)
 
+# @login_required
+# def like(request):
+#     likes = Like.objects.
+
 
 @login_required
 def profile(request, username):
@@ -110,26 +114,28 @@ def profile(request, username):
 
 @login_required
 def following(request):
-    followees = Follow.objects.filter(follower=request.user.id)
-    print(followees)
-    followees_array = []
-    for user in followees_array:
-        followees_array += user.followee
-    print(followees_array)
+    return render(request, "network/following.html")
 
-    posts = Post.objects.all().order_by("-timestamp")
+@login_required
+def following_feed(request):
+    followees = Follow.objects.filter(follower=request.user)
+    followees_array = []
+    for user in followees:
+        followees_array.append(user.followee)
+
+    posts = Post.objects.all().filter(creator__in=followees_array).order_by("-timestamp")
 
     # Create a list of dictionaries representing the Post objects
     posts_data = [
         {
             'username': post.creator.username,
             'body': post.body,
+            'likes': post.likes,
             'timestamp': post.timestamp.strftime('%Y-%m-%d %H:%M:%S')
         }
         for post in posts
     ]
-
-    return render(request, "network/following.html")
+    return JsonResponse(posts_data, safe=False)
 
 
 def login_view(request):

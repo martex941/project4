@@ -3,9 +3,13 @@
 {% block body %}
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            new_post();
-            timeline("following");
+            timeline("following_feed");
         });
     </script>
+
+    <div class="container">
+        <div class="timeline" id="timeline-feed">
+        </div>
+    </div>
     
 {% endblock %}
