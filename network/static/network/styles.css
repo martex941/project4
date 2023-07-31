@@ -41,7 +41,7 @@ form {
     justify-content: end;
 }
 
-.like-btn, .dislike-btn {
+.like-btn, .unlike-btn {
     margin-left: 0.5rem;
 }
 

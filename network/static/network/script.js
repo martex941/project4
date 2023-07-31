@@ -4,6 +4,63 @@ function getCsrf(name) {
     if (parts.length === 2) return parts.pop().split(';').shift();
 }
 
+function like_switch(like_check) {
+    if (like_check === "True") {
+        console.log("liked");
+        document.querySelector("#unlike-btn").style.display = 'block';
+        document.querySelector("#like-btn").style.display = 'none';
+    }
+    else if (like_check === "False") {
+        console.log("not liked");
+        document.querySelector("#unlike-btn").style.display = 'none';
+        document.querySelector("#like-btn").style.display = 'block';
+    }
+}
+
+function like(liked_post) {
+    const csrftoken = getCsrf('csrftoken');
+
+    fetch("like", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrftoken
+        },
+        body: JSON.stringify({
+            liked_post: liked_post
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+    })
+    .catch(error => {
+        console.error(error);
+    });
+}
+
+function unlike(liked_post) {
+    const csrftoken = getCsrf('csrftoken');
+
+    fetch("like", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrftoken
+        },
+        body: JSON.stringify({
+            liked_post: liked_post
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+    })
+    .catch(error => {
+        console.error(error);
+    });
+}
+
 function timeline(url) {
     fetch(`${url}`)
     .then(response => response.json())
@@ -22,13 +79,14 @@ function timeline(url) {
                 <div class="col post-like">
                     <h5 class="text-lead">${element.likes} likes</h5>
                     <button class="btn btn-primary like-btn" id="like-btn">Like</button>
-                    <button class="btn btn-primary dislike-btn" id="dislike-btn">Dislike</button>
+                    <button class="btn btn-secondary unlike-btn" id="unlike-btn">Unlike</button>
                 </div>
             </div>
             `;
+
             document.querySelector("#timeline-feed").append(post_div);
         });
-    });           
+    });     
 }
 
 function following_switch() {

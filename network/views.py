@@ -31,6 +31,54 @@ def new_post(request):
     return JsonResponse({"message": "Post created."}, status=201)
 
 
+def like_check(request, post_id):
+    like_check = False
+    try:
+        Like.objects.get(liker=request.user, liked_post=post_id)
+        like_check = True
+    except Like.DoesNotExist:
+        pass
+    return like_check
+
+@login_required
+def like(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required."}, status=400)
+    
+    data = json.loads(request.body)
+    current_user = request.user
+    body = data.get("liked_post", "")
+    liked_post = Post.objects.get(id=body)
+
+    new_like = Like(liker=current_user, liked_post=liked_post)
+    new_like.save()
+
+    # Update the like value in the post
+    liked_post.likes += 1
+    liked_post.save()
+
+    return JsonResponse({"message": "Liked"}, status=201)
+    
+@login_required
+def unlike(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required."}, status=400)
+    
+    data = json.loads(request.body)
+    current_user = request.user
+    body = data.get("liked_post", "")
+    liked_post = Post.objects.get(id=body)
+
+    unlike_post = Like.objects.get(liker=current_user, liked_post=liked_post)
+    unlike_post.delete()
+
+    # Update the like value in the post
+    liked_post.likes -= 1
+    liked_post.save()
+
+    return JsonResponse({"message": "Unliked"}, status=201)
+
+
 def timeline(request):
     posts = Post.objects.all().order_by("-timestamp")
 
@@ -40,6 +88,7 @@ def timeline(request):
             'username': post.creator.username,
             'body': post.body,
             'likes': post.likes,
+            'like_check': like_check(request, post.id),
             'timestamp': post.timestamp.strftime('%Y-%m-%d %H:%M:%S')
         }
         for post in posts
@@ -71,7 +120,6 @@ def unfollow(request):
     body = data.get("followee", "")
     followed_user = User.objects.get(username=body)
     unfollowing = Follow.objects.get(follower=current_user, followee=followed_user)
-    print(unfollowing)
     unfollowing.delete()
 
     return JsonResponse({"message": "Unfollowed."}, status=201)
@@ -117,6 +165,7 @@ def profile_feed(request, username):
             'username': post.creator.username,
             'body': post.body,
             'likes': post.likes,
+            'like_check': like_check(request, post.id),
             'timestamp': post.timestamp.strftime('%Y-%m-%d %H:%M:%S')
         }
         for post in posts
@@ -144,6 +193,7 @@ def following_feed(request):
             'username': post.creator.username,
             'body': post.body,
             'likes': post.likes,
+            'like_check': like_check(request, post.id),
             'timestamp': post.timestamp.strftime('%Y-%m-%d %H:%M:%S')
         }
         for post in posts
