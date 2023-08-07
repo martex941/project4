@@ -1,8 +1,6 @@
 import json
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.core.serializers.json import DjangoJSONEncoder
-from django.forms.models import model_to_dict
 from django.db import IntegrityError
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
@@ -85,6 +83,7 @@ def timeline(request):
     # Create a list of dictionaries representing the Post objects
     posts_data = [
         {
+            'id': post.id,
             'username': post.creator.username,
             'body': post.body,
             'likes': post.likes,
@@ -162,6 +161,7 @@ def profile_feed(request, username):
     # Create a list of dictionaries representing the Post objects
     posts_data = [
         {
+            'id': post.id,
             'username': post.creator.username,
             'body': post.body,
             'likes': post.likes,
@@ -190,6 +190,7 @@ def following_feed(request):
     # Create a list of dictionaries representing the Post objects
     posts_data = [
         {
+            'id': post.id,
             'username': post.creator.username,
             'body': post.body,
             'likes': post.likes,
