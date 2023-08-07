@@ -68,3 +68,22 @@
                     like(element.id);
                 })
             }
+
+
+            // ===========================================
+            
+            post_div.innerHTML =
+            `
+            <a href="/profile/${element.username}"><h5 class="post-creator">${element.username}</h5></a>
+            <p class="post-body">${element.body}</p>
+            <hr>
+            <div class="row">
+                <span class="col post-timestamp">${element.timestamp}</span>
+                <div class="col post-like">
+                    <h5 class="text-lead">${element.likes} likes</h5>
+                    <div id="like-check" data-check="${element.like_check}"></div>
+                    <button class="btn btn-primary like-btn" id="like-btn" onclick="like(${element.id})">Like</button>
+                    <button class="btn btn-secondary unlike-btn" id="unlike-btn" onclick="unlike(${element.id})">Unlike</button>
+                </div>
+            </div>
+            `;

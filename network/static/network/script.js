@@ -4,18 +4,6 @@ function getCsrf(name) {
     if (parts.length === 2) return parts.pop().split(';').shift();
 }
 
-function like_switch(like_check) {
-    if (like_check) {
-        console.log("liked");
-        document.querySelector("#unlike-btn").style.display = 'block';
-        document.querySelector("#like-btn").style.display = 'none';
-    }
-    else if (!like_check) {
-        console.log("not liked");
-        document.querySelector("#unlike-btn").style.display = 'none';
-        document.querySelector("#like-btn").style.display = 'block';
-    }
-}
 
 function like(liked_post) {
     const csrftoken = getCsrf('csrftoken');
@@ -69,20 +57,86 @@ function timeline(url) {
         posts.forEach(element => {
             const post_div = document.createElement("div");
             post_div.className = 'post';
-            post_div.innerHTML =
-            `
-            <a href="/profile/${element.username}"><h5 class="post-creator">${element.username}</h5></a>
-            <p class="post-body">${element.body}</p>
-            <hr>
-            <div class="row">
-                <span class="col post-timestamp">${element.timestamp}</span>
-                <div class="col post-like">
-                    <h5 class="text-lead">${element.likes} likes</h5>
-                    <button class="btn btn-primary like-btn" id="like-btn" onclick="like(${element.id})">Like</button>
-                    <button class="btn btn-secondary unlike-btn" id="unlike-btn" onclick="unlike(${element.id})">Unlike</button>
-                </div>
-            </div>
-            `;
+
+            // <a href="/profile/${element.username}"><h5 class="post-creator">${element.username}</h5></a>
+            const a = document.createElement("a");
+            a.href = `/profile/${element.username}`;
+            const post_creator = document.createElement("h5");
+            post_creator.className = 'post-creator';
+            post_creator.innerHTML = `${element.username}`;
+            a.appendChild(post_creator);
+            post_div.append(a);
+
+            // <p class="post-body">${element.body}</p>
+            const p = document.createElement("p");
+            p.className = 'post-body';
+            p.innerHTML = `${element.body}`;
+            post_div.append(p);
+
+            // <hr>
+            const hr = document.createElement("hr");
+            post_div.append(hr);
+
+            // <div class="row">
+            const row = document.createElement("div");
+            row.className = 'row';
+
+            // <span class="col post-timestamp">${element.timestamp}</span>
+            const span = document.createElement("span");
+            span.className = 'col post-timestamp';
+            span.innerHTML = `${element.timestamp}`;
+            row.appendChild(span);
+
+            // <div class="col post-like">
+            const post_like = document.createElement("div");
+            post_like.className = 'col post-like';
+
+            // <h5 class="text-lead">${element.likes} likes</h5>
+            const likes_amount = document.createElement("h5");
+            likes_amount.className = 'text-lead';
+            likes_amount.innerHTML = `${element.likes} likes`;
+            post_like.appendChild(likes_amount);
+
+            function create_like_btn() {
+                const like_btn = document.createElement("button");
+                like_btn.className = 'btn btn-primary like-btn';
+                like_btn.id = 'like-btn';
+                like_btn.innerHTML = "Like";
+                post_like.appendChild(like_btn);
+                like_btn.addEventListener('click', () => {
+                    like(element.id);
+                    likes_amount.innerHTML = `${element.likes += 1} likes`;
+                    like_btn.remove();
+                    create_unlike_btn();
+                })
+            }
+
+            function create_unlike_btn() {
+                const unlike_btn = document.createElement("button");
+                unlike_btn.className = 'btn btn-secondary yunlike-btn';
+                unlike_btn.id = 'unlike-btn';
+                unlike_btn.innerHTML = "Unlike";
+                post_like.appendChild(unlike_btn);
+                unlike_btn.addEventListener('click', () => {
+                    unlike(element.id);
+                    likes_amount.innerHTML = `${element.likes -= 1} likes`;
+                    unlike_btn.remove();
+                    create_like_btn();
+                })
+            }
+
+            // <button class="btn btn-primary like-btn" id="like-btn">Like</button>
+            // <button class="btn btn-secondary unlike-btn" id="unlike-btn">Unlike</button>
+            if (element.like_check) {
+                create_unlike_btn();    
+            }
+            else {
+                create_like_btn();
+            }
+
+            row.appendChild(post_like);
+            post_div.append(row);
+
             document.querySelector("#timeline-feed").append(post_div);
         });
     });     
