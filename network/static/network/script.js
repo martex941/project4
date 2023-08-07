@@ -49,6 +49,29 @@ function unlike(unliked_post) {
     });
 }
 
+function edit_post(post_id, edited_body) {
+    const csrftoken = getCsrf('csrftoken');
+
+    fetch("edit_post", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrftoken
+        },
+        body: JSON.stringify({
+            post_id: post_id,
+            edited_body: edited_body
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+    })
+    .catch(error => {
+        console.error(error);
+    });
+}
+
 function timeline(url) {
     fetch(`${url}`)
     .then(response => response.json())
@@ -68,41 +91,74 @@ function timeline(url) {
             post_div.append(a);
 
             // <p class="post-body">${element.body}</p>
-            const p = document.createElement("p");
-            p.className = 'post-body';
-            p.innerHTML = `${element.body}`;
-            post_div.append(p);
+            let body = document.createElement("p");
+            body.className = 'post-body';
+            body.innerHTML = `${element.body}`;
+            post_div.append(body);
 
             // <hr>
             const hr = document.createElement("hr");
             post_div.append(hr);
 
-            // <div class="row">
-            const row = document.createElement("div");
-            row.className = 'row';
+            // <div class="row"> TIMESTAMP AND LIKES
+            const timestamp_likes = document.createElement("div");
+            timestamp_likes.className = 'row';
 
             // <span class="col post-timestamp">${element.timestamp}</span>
             const span = document.createElement("span");
             span.className = 'col post-timestamp';
             span.innerHTML = `${element.timestamp}`;
-            row.appendChild(span);
+            timestamp_likes.appendChild(span);
 
-            // <div class="col post-like">
-            const post_like = document.createElement("div");
-            post_like.className = 'col post-like';
-
-            // <h5 class="text-lead">${element.likes} likes</h5>
+            // <h5 class="col text-lead likes>${element.likes} likes</h5>
             const likes_amount = document.createElement("h5");
-            likes_amount.className = 'text-lead';
+            likes_amount.className = 'col text-lead likes';
             likes_amount.innerHTML = `${element.likes} likes`;
-            post_like.appendChild(likes_amount);
+            timestamp_likes.appendChild(likes_amount);
 
+            post_div.append(timestamp_likes);
+
+            // <div class="col"> EDIT BUTTON AND LIKE BUTTON
+            const edit_like = document.createElement("div");
+            edit_like.className = 'row';
+
+            // <div class="col"> EDIT BUTTON COLUMN
+            const edit_col = document.createElement("div");
+            edit_col.className = 'col';
+
+            const current_user = document.querySelector("#username").dataset.name;
+            
+            if (current_user == element.username) {
+                const edit_btn = document.createElement("button");
+                edit_btn.className = 'btn btn-primary edit-btn';
+                edit_btn.id = 'edit-btn';
+                edit_btn.innerHTML = "Edit post";
+                edit_col.appendChild(edit_btn);
+                edit_btn.addEventListener('click', () => {
+                    body = document.createElement("textarea");
+                    body.innerHTML = `${element.body}`;
+
+                })
+            }
+
+            edit_like.appendChild(edit_col);
+
+            // <div class="col"> LIKE BUTTON COLUMN
+            const like_col = document.createElement("div");
+            like_col.className = 'col';
+
+            // <button class="btn btn-primary like-btn" id="like-btn">Like</button>
             function create_like_btn() {
                 const like_btn = document.createElement("button");
                 like_btn.className = 'btn btn-primary like-btn';
                 like_btn.id = 'like-btn';
                 like_btn.innerHTML = "Like";
-                post_like.appendChild(like_btn);
+                like_col.appendChild(like_btn);
+
+                // Upon clicking:
+                // - send POST request to the server's "like" path
+                // - update front-end likes
+                // - remove like button and create unlike button
                 like_btn.addEventListener('click', () => {
                     like(element.id);
                     likes_amount.innerHTML = `${element.likes += 1} likes`;
@@ -111,12 +167,18 @@ function timeline(url) {
                 })
             }
 
+            // <button class="btn btn-secondary unlike-btn" id="unlike-btn">Unlike</button>
             function create_unlike_btn() {
                 const unlike_btn = document.createElement("button");
                 unlike_btn.className = 'btn btn-secondary yunlike-btn';
                 unlike_btn.id = 'unlike-btn';
                 unlike_btn.innerHTML = "Unlike";
-                post_like.appendChild(unlike_btn);
+                like_col.appendChild(unlike_btn);
+
+                // Upon clicking:
+                // - send POST request to the server's "unlike" path
+                // - update front-end likes
+                // - remove unlike button and create like button
                 unlike_btn.addEventListener('click', () => {
                     unlike(element.id);
                     likes_amount.innerHTML = `${element.likes -= 1} likes`;
@@ -125,8 +187,7 @@ function timeline(url) {
                 })
             }
 
-            // <button class="btn btn-primary like-btn" id="like-btn">Like</button>
-            // <button class="btn btn-secondary unlike-btn" id="unlike-btn">Unlike</button>
+            // Check whether the post is liked or not and display buttons accordingly
             if (element.like_check) {
                 create_unlike_btn();    
             }
@@ -134,8 +195,9 @@ function timeline(url) {
                 create_like_btn();
             }
 
-            row.appendChild(post_like);
-            post_div.append(row);
+            edit_like.appendChild(like_col);
+
+            post_div.append(edit_like);
 
             document.querySelector("#timeline-feed").append(post_div);
         });

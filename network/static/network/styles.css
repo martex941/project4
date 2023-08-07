@@ -35,9 +35,13 @@ form {
     padding: 1rem;
 }
 
-.post-like {
+.col.post-timestamp {
     display: flex;
-    flex-direction: row;
+    justify-content: start;
+}
+
+.col.likes {
+    display: flex;
     justify-content: end;
 }
 
