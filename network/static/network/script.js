@@ -90,11 +90,16 @@ function timeline(url) {
             a.appendChild(post_creator);
             post_div.append(a);
 
+            // <div class="post-body-div">
+            const body_div = document.createElement("div");
+            body_div.className = 'post-body-div';
+
             // <p class="post-body">${element.body}</p>
             let body = document.createElement("p");
             body.className = 'post-body';
             body.innerHTML = `${element.body}`;
-            post_div.append(body);
+            body_div.appendChild(body);
+            post_div.append(body_div);
 
             // <hr>
             const hr = document.createElement("hr");
@@ -115,7 +120,6 @@ function timeline(url) {
             likes_amount.className = 'col text-lead likes';
             likes_amount.innerHTML = `${element.likes} likes`;
             timestamp_likes.appendChild(likes_amount);
-
             post_div.append(timestamp_likes);
 
             // <div class="col"> EDIT BUTTON AND LIKE BUTTON
@@ -127,7 +131,6 @@ function timeline(url) {
             edit_col.className = 'col';
 
             const current_user = document.querySelector("#username").dataset.name;
-            
             if (current_user == element.username) {
                 const edit_btn = document.createElement("button");
                 edit_btn.className = 'btn btn-primary edit-btn';
@@ -140,7 +143,6 @@ function timeline(url) {
 
                 })
             }
-
             edit_like.appendChild(edit_col);
 
             // <div class="col"> LIKE BUTTON COLUMN

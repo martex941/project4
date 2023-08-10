@@ -107,7 +107,7 @@ def follow(request):
     new_follow = Follow(follower=current_user, followee=followed_user)
     new_follow.save()
 
-    return JsonResponse({"message": "Followed."}, status=201)
+    return JsonResponse({"message": "Followed"}, status=201)
 
 @login_required
 def unfollow(request):
@@ -121,7 +121,7 @@ def unfollow(request):
     unfollowing = Follow.objects.get(follower=current_user, followee=followed_user)
     unfollowing.delete()
 
-    return JsonResponse({"message": "Unfollowed."}, status=201)
+    return JsonResponse({"message": "Unfollowed"}, status=201)
 
 
 @login_required
