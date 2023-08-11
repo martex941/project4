@@ -138,9 +138,26 @@ function timeline(url) {
                 edit_btn.innerHTML = "Edit post";
                 edit_col.appendChild(edit_btn);
                 edit_btn.addEventListener('click', () => {
-                    body = document.createElement("textarea");
-                    body.innerHTML = `${element.body}`;
 
+                    body.style.display = 'none';
+                    edit_btn.style.display = 'none';
+
+                    const edit_body = document.createElement("textarea");
+                    edit_body.innerHTML = `${element.body}`;
+                    body_div.appendChild(edit_body);
+
+                    const save_btn = document.createElement("button");
+                    save_btn.className = "btn btn-primary save-btn";
+                    body_div.appendChild(save_btn);
+                    save_btn.addEventListener('click', () => {
+                        const edited_body = edit_body.value;
+                        edit_post(element.id, edited_body);
+                        body.innerHTML = `${edited_body}`;
+                        edit_body.style.display = 'none';
+                        save_btn.style.display = 'none';
+                        edit_btn.style.display = 'block';
+                        body.style.display = 'block';
+                    })
                 })
             }
             edit_like.appendChild(edit_col);
