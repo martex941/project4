@@ -28,6 +28,21 @@ def new_post(request):
 
     return JsonResponse({"message": "Post created."}, status=201)
 
+@login_required
+def edit_post(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required."}, status=400)
+
+    data = json.loads(request.body)
+    post_id = data.get("post_id", "")
+    edited_post = data.get("edited_body", "")
+
+    post_to_edit = Post.objects.get(id=post_id)
+    post_to_edit.body = edited_post
+    post_to_edit.save()
+
+    return JsonResponse({"message": "Post edited successfully"}, status=201)
+
 
 def like_check(request, post_id):
     like_check = False

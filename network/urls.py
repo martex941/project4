@@ -6,6 +6,7 @@ from . import views
 urlpatterns = [
     path("", views.index, name="index"),
     path("new_post", views.new_post, name="new_post"),
+    path("edit_post", views.edit_post, name="edit_post"),
     path("timeline", views.timeline, name="timeline"),
     path("like_check/<int:post_id>", views.like_check, name="like_check"),
     path("like", views.like, name="like"),

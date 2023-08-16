@@ -138,16 +138,15 @@ function timeline(url) {
                 edit_btn.innerHTML = "Edit post";
                 edit_col.appendChild(edit_btn);
                 edit_btn.addEventListener('click', () => {
-
                     body.style.display = 'none';
                     edit_btn.style.display = 'none';
-
                     const edit_body = document.createElement("textarea");
                     edit_body.innerHTML = `${element.body}`;
                     body_div.appendChild(edit_body);
 
                     const save_btn = document.createElement("button");
                     save_btn.className = "btn btn-primary save-btn";
+                    save_btn.innerHTML = "SAVE";
                     body_div.appendChild(save_btn);
                     save_btn.addEventListener('click', () => {
                         const edited_body = edit_body.value;
