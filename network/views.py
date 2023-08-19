@@ -1,11 +1,11 @@
 import json
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.db import IntegrityError
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
-from django.views.decorators.csrf import csrf_exempt
 
 from .models import User, Post, Like, Follow
 
@@ -94,6 +94,8 @@ def unlike(request):
 
 def timeline(request):
     posts = Post.objects.all().order_by("-timestamp")
+    paginated_posts = Paginator(posts, 10)
+    pages = paginated_posts.num_pages
 
     # Create a list of dictionaries representing the Post objects
     posts_data = [
@@ -105,9 +107,15 @@ def timeline(request):
             'like_check': like_check(request, post.id),
             'timestamp': post.timestamp.strftime('%Y-%m-%d %H:%M:%S')
         }
-        for post in posts
+        for post in paginated_posts.object_list
     ]
-    return JsonResponse(posts_data, safe=False)
+
+    response_data = {
+        'pages': pages,
+        'posts_data': posts_data
+    }
+    
+    return JsonResponse(response_data, safe=False)
 
 
 @login_required

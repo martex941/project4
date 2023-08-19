@@ -75,9 +75,9 @@ function edit_post(post_id, edited_body) {
 function timeline(url) {
     fetch(`${url}`)
     .then(response => response.json())
-    .then(posts => {
-        console.log(posts);
-        posts.forEach(element => {
+    .then(data => {
+        console.log(data);
+        data['posts_data'].forEach(element => {
             const post_div = document.createElement("div");
             post_div.className = 'post';
 
@@ -313,6 +313,9 @@ function new_post() {
         .catch(error => {
             console.error(error);
         });
+        setTimeout(() => {
+            location.reload();
+        }, 50);
 
         return false;  
     }
