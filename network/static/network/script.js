@@ -89,7 +89,7 @@ function timeline(url) {
             const endIndex = startIndex + postsPerPage;
 
             for (let i = startIndex; i < endIndex && i < posts_data.length; i++) {
-                const element = data[i];
+                const element = posts_data[i];
 
                 const post_div = document.createElement("div");
                 post_div.className = 'post';
@@ -253,6 +253,41 @@ function timeline(url) {
                 displayPosts(data["posts_data"]);    
             }
         }
+
+        // Creating page navigation
+        const navDiv = document.createElement("div");
+        navDiv.className = 'container';
+        const pageNav = document.createElement("nav");
+
+        const ul = document.createElement("ul");
+        ul.className = 'pagination';
+        const previousPageNav = document.createElement("li");
+        previousPageNav.className = 'page-item previousPage';
+        previousPageNav.addEventListener('click', () => {
+            previousPage();
+        })
+        ul.appendChild(previousPageNav);
+        for (let i = 0; i <= data["pages"].length; i++) {
+            const li = document.createElement("li");
+            li.className = 'page-item';
+            li.innerHTML = `${data["pages"][i]}`;
+            li.addEventListener('click', () => {
+                goToPage(data["pages"][i]);
+            })
+            ul.appendChild(li);
+        }
+        const nextPageNav = document.createElement("li");
+        nextPageNav.className = 'page-item nextPage';
+        nextPageNav.addEventListener('click', () => {
+            nextPage();
+        })
+        ul.appendChild(nextPageNav);
+
+        pageNav.appendChild(ul);
+        navDiv.appendChild(pageNav);
+
+        document.querySelector("#timeline-feed").append(navDiv);
+
     });     
 }
 
