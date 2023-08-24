@@ -78,12 +78,13 @@ function timeline(url) {
     .then(data => {
         console.log(data);
 
+        let currentPage = 1;
+
         function displayPosts(posts_data) {
             // Clear timeline
             document.querySelector("#timeline-feed").innerHTML = '';
 
             const postsPerPage = 10;
-            let currentPage = 1;
 
             const startIndex = (currentPage - 1) * postsPerPage;
             const endIndex = startIndex + postsPerPage;
@@ -232,61 +233,70 @@ function timeline(url) {
 
                 document.querySelector("#timeline-feed").append(post_div);
             }
-        } // displayPosts function
+        }
         displayPosts(data["posts_data"]);
 
         function goToPage(pageNumber) {
             currentPage = pageNumber;
             displayPosts(data["posts_data"]);
+            displayPageNav();
         }
 
         function nextPage() {
-            if (currentPage < data["pages"]) {
+            if (currentPage < parseInt(data["pages"])) {
                 currentPage++;
-                displayPosts(data["posts_data"]);    
+                displayPosts(data["posts_data"]);
+                displayPageNav();
             }
         }
 
         function previousPage() {
-            if (currentPage == 1) {
+            if (currentPage <= 1) {
                 currentPage--;
-                displayPosts(data["posts_data"]);    
+                displayPosts(data["posts_data"]);
+                displayPageNav();
             }
         }
 
-        // Creating page navigation
-        const navDiv = document.createElement("div");
-        navDiv.className = 'container';
-        const pageNav = document.createElement("nav");
+        function displayPageNav () {
+            // Creating page navigation
+            const navDiv = document.createElement("div");
+            navDiv.className = 'd-flex justify-content-center';
+            const pageNav = document.createElement("nav");
 
-        const ul = document.createElement("ul");
-        ul.className = 'pagination';
-        const previousPageNav = document.createElement("li");
-        previousPageNav.className = 'page-item previousPage';
-        previousPageNav.addEventListener('click', () => {
-            previousPage();
-        })
-        ul.appendChild(previousPageNav);
-        for (let i = 0; i <= data["pages"].length; i++) {
-            const li = document.createElement("li");
-            li.className = 'page-item';
-            li.innerHTML = `${data["pages"][i]}`;
-            li.addEventListener('click', () => {
-                goToPage(data["pages"][i]);
+            const ul = document.createElement("ul");
+            ul.className = 'pagination';
+            const previousPageNav = document.createElement("li");
+            previousPageNav.className = 'page-item page-link previousPage';
+            previousPageNav.innerHTML = "Previous";
+            previousPageNav.addEventListener('click', () => {
+                previousPage();
             })
-            ul.appendChild(li);
+            ul.appendChild(previousPageNav);
+            let pages = parseInt(data["pages"]);
+            for (let i = 1; i <= pages; i++) {
+                const li = document.createElement("li");
+                li.className = 'page-item page-link';
+                li.innerHTML = `${i}`;
+                li.addEventListener('click', () => {
+                    goToPage(i);
+                })
+                ul.appendChild(li);
+            }
+            const nextPageNav = document.createElement("li");
+            nextPageNav.className = 'page-item page-link nextPage';
+            nextPageNav.innerHTML = "Next";
+            nextPageNav.addEventListener('click', () => {
+                nextPage();
+            })
+            ul.appendChild(nextPageNav);
+
+            pageNav.appendChild(ul);
+            navDiv.appendChild(pageNav);
+
+            document.querySelector("#timeline-feed").append(navDiv);
         }
-        const nextPageNav = document.createElement("li");
-        nextPageNav.className = 'page-item nextPage';
-        nextPageNav.addEventListener('click', () => {
-            nextPage();
-        })
-        ul.appendChild(nextPageNav);
-
-        pageNav.appendChild(ul);
-        navDiv.appendChild(pageNav);
-
-        document.querySelector("#timeline-feed").append(navDiv);
+        displayPageNav();
 
     });     
 }
