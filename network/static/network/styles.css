@@ -2,8 +2,8 @@
     display: flex;
     justify-content: center;
     flex-direction: column;
-    border-left: black 1px solid;
-    border-right: black 1px solid;
+    border-left: rgb(205, 205, 205) 1px solid;
+    border-right: rgb(205, 205, 205) 1px solid;
     width: 50%;
 }
 
@@ -14,7 +14,7 @@
 }
 
 .new-post {
-    border-bottom: black 1px solid;
+    border-bottom: rgb(205, 205, 205) 1px solid;
     margin-bottom: 1rem;
 }
 
@@ -27,7 +27,7 @@ form {
     padding: 1rem;
     margin: 0.5rem;
     width: auto;
-    border: black 1px solid;
+    border: rgb(150, 150, 150) 2px solid;
     border-radius: 10px;
 }
 

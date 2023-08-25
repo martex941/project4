@@ -232,14 +232,17 @@ function timeline(url) {
                 post_div.append(edit_like);
 
                 document.querySelector("#timeline-feed").append(post_div);
+                console.log(currentPage);
             }
         }
         displayPosts(data["posts_data"]);
 
         function goToPage(pageNumber) {
-            currentPage = pageNumber;
-            displayPosts(data["posts_data"]);
-            displayPageNav();
+            if (currentPage != pageNumber) {
+                currentPage = pageNumber;
+                displayPosts(data["posts_data"]);
+                displayPageNav();
+            }
         }
 
         function nextPage() {
@@ -251,7 +254,7 @@ function timeline(url) {
         }
 
         function previousPage() {
-            if (currentPage <= 1) {
+            if (currentPage > 1) {
                 currentPage--;
                 displayPosts(data["posts_data"]);
                 displayPageNav();
@@ -266,13 +269,20 @@ function timeline(url) {
 
             const ul = document.createElement("ul");
             ul.className = 'pagination';
+
             const previousPageNav = document.createElement("li");
-            previousPageNav.className = 'page-item page-link previousPage';
+            if (currentPage == 1) {
+                previousPageNav.className = 'page-item page-link previousPage disabled';
+            }
+            else {
+                previousPageNav.className = 'page-item page-link previousPage';
+            }
             previousPageNav.innerHTML = "Previous";
             previousPageNav.addEventListener('click', () => {
                 previousPage();
             })
             ul.appendChild(previousPageNav);
+
             let pages = parseInt(data["pages"]);
             for (let i = 1; i <= pages; i++) {
                 const li = document.createElement("li");
@@ -281,10 +291,20 @@ function timeline(url) {
                 li.addEventListener('click', () => {
                     goToPage(i);
                 })
+                if (currentPage == i) {
+                    li.style.backgroundColor = '#0d6efd';
+                    li.style.color = 'white';
+                }
                 ul.appendChild(li);
             }
+
             const nextPageNav = document.createElement("li");
-            nextPageNav.className = 'page-item page-link nextPage';
+            if (currentPage == pages) {
+                nextPageNav.className = 'page-item page-link nextPage disabled';
+            }
+            else {
+                nextPageNav.className = 'page-item page-link nextPage';
+            }
             nextPageNav.innerHTML = "Next";
             nextPageNav.addEventListener('click', () => {
                 nextPage();
