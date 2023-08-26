@@ -33,10 +33,12 @@ def edit_post(request):
     if request.method != "POST":
         return JsonResponse({"error": "POST request required."}, status=400)
 
+    # Get needed variables
     data = json.loads(request.body)
     post_id = data.get("post_id", "")
     edited_post = data.get("edited_body", "")
 
+    # Get the Post object which is being edited, replace its body with new contents and save it
     post_to_edit = Post.objects.get(id=post_id)
     post_to_edit.body = edited_post
     post_to_edit.save()
@@ -58,11 +60,13 @@ def like(request):
     if request.method != "POST":
         return JsonResponse({"error": "POST request required."}, status=400)
     
+    # Get needed variables
     data = json.loads(request.body)
     current_user = request.user
     body = data.get("liked_post", "")
     liked_post = Post.objects.get(id=body)
 
+    # Create new Like object and save it
     new_like = Like(liker=current_user, liked_post=liked_post)
     new_like.save()
 
@@ -77,11 +81,13 @@ def unlike(request):
     if request.method != "POST":
         return JsonResponse({"error": "POST request required."}, status=400)
     
+    # Get needed variables
     data = json.loads(request.body)
     current_user = request.user
     body = data.get("liked_post", "")
     liked_post = Post.objects.get(id=body)
 
+    # Get the desired Like object using the variables and delete it
     unlike_post = Like.objects.get(liker=current_user, liked_post=liked_post)
     unlike_post.delete()
 
@@ -107,9 +113,10 @@ def timeline(request):
             'like_check': like_check(request, post.id),
             'timestamp': post.timestamp.strftime('%Y-%m-%d %H:%M:%S')
         }
-        for post in paginated_posts.object_list
+        for post in posts
     ]
 
+    # Create a dictionary which contains posts as well as information required for pagination
     response_data = {
         'pages': pages,
         'posts_data': posts_data
@@ -123,10 +130,15 @@ def follow(request):
     if request.method != "POST":
         return JsonResponse({"error": "POST request required."}, status=400)
     
+    # Get the data from javascript post request
     data = json.loads(request.body)
-    current_user = request.user
     body = data.get("followee", "")
+
+    # Get the current user and user object using the obtained JSON file
+    current_user = request.user
     followed_user = User.objects.get(username=body)
+
+    # Create a new Follow object and save it
     new_follow = Follow(follower=current_user, followee=followed_user)
     new_follow.save()
 
@@ -137,10 +149,15 @@ def unfollow(request):
     if request.method != "POST":
         return JsonResponse({"error": "POST request required."}, status=400)
     
+    # Get the data from javascript post request
     data = json.loads(request.body)
-    current_user = request.user
     body = data.get("followee", "")
+
+    # Get the current user and user object using the obtained JSON file
+    current_user = request.user
     followed_user = User.objects.get(username=body)
+
+    # Get the Follow object and delete it, thus ending the following of one user and another
     unfollowing = Follow.objects.get(follower=current_user, followee=followed_user)
     unfollowing.delete()
 
@@ -178,8 +195,11 @@ def profile(request, username):
 @login_required
 def profile_feed(request, username):
 
+    # Get the model of the user and use it to filter the user's posts
     profile_user = User.objects.get(username=username)
     posts = Post.objects.filter(creator=profile_user.id).order_by("-timestamp")
+    paginated_posts = Paginator(posts, 10)
+    pages = paginated_posts.num_pages
 
     # Create a list of dictionaries representing the Post objects
     posts_data = [
@@ -194,7 +214,12 @@ def profile_feed(request, username):
         for post in posts
     ]
 
-    return JsonResponse(posts_data, safe=False)
+    response_data = {
+        "pages": pages,
+        "posts_data": posts_data
+    }
+
+    return JsonResponse(response_data, safe=False)
 
 
 @login_required
@@ -203,12 +228,17 @@ def following(request):
 
 @login_required
 def following_feed(request):
+
+    # Obtain a list of the users that are followed 
     followees = Follow.objects.filter(follower=request.user)
     followees_array = []
     for user in followees:
         followees_array.append(user.followee)
 
+    # Use the list to filter all of the posts, chronologically reversed
     posts = Post.objects.filter(creator__in=followees_array).order_by("-timestamp")
+    paginated_posts = Paginator(posts, 10)
+    pages = paginated_posts.num_pages
 
     # Create a list of dictionaries representing the Post objects
     posts_data = [
@@ -222,7 +252,13 @@ def following_feed(request):
         }
         for post in posts
     ]
-    return JsonResponse(posts_data, safe=False)
+
+    response_data = {
+        "pages": pages,
+        "posts_data": posts_data
+    }
+
+    return JsonResponse(response_data, safe=False)
 
 
 def login_view(request):

@@ -1,3 +1,4 @@
+// Obtain csrf token needed to make POST requests
 function getCsrf(name) {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
@@ -78,20 +79,24 @@ function timeline(url) {
     .then(data => {
         console.log(data);
 
+        // Variable needed for page switching
         let currentPage = 1;
 
         function displayPosts(posts_data) {
             // Clear timeline
             document.querySelector("#timeline-feed").innerHTML = '';
 
+            // Declate how many posts can be visible on a single page
             const postsPerPage = 10;
 
+            // Declare start and end index using current page and how many posts should be on the page
             const startIndex = (currentPage - 1) * postsPerPage;
             const endIndex = startIndex + postsPerPage;
 
             for (let i = startIndex; i < endIndex && i < posts_data.length; i++) {
                 const element = posts_data[i];
 
+                // <div class="post"> SINGLE POST DIV
                 const post_div = document.createElement("div");
                 post_div.className = 'post';
 
@@ -104,7 +109,7 @@ function timeline(url) {
                 a.appendChild(post_creator);
                 post_div.append(a);
 
-                // <div class="post-body-div">
+                // <div class="post-body-div"> POST CONTENT
                 const body_div = document.createElement("div");
                 body_div.className = 'post-body-div';
 
@@ -136,7 +141,7 @@ function timeline(url) {
                 timestamp_likes.appendChild(likes_amount);
                 post_div.append(timestamp_likes);
 
-                // <div class="col"> EDIT BUTTON AND LIKE BUTTON
+                // <div class="col"> EDIT BUTTON AND LIKE BUTTON COLUMN
                 const edit_like = document.createElement("div");
                 edit_like.className = 'row';
 
@@ -144,6 +149,7 @@ function timeline(url) {
                 const edit_col = document.createElement("div");
                 edit_col.className = 'col';
 
+                // <button class="btn btn-primary edit-btn" id="edit-btn">Edit post</button> EDIT BUTTON
                 const current_user = document.querySelector("#username").dataset.name;
                 if (current_user == element.username) {
                     const edit_btn = document.createElement("button");
@@ -151,6 +157,10 @@ function timeline(url) {
                     edit_btn.id = 'edit-btn';
                     edit_btn.innerHTML = "Edit post";
                     edit_col.appendChild(edit_btn);
+
+                    // Upon clicking:
+                    // - hide current body and edit button
+                    // - create a new textarea and populate it using content from the old body
                     edit_btn.addEventListener('click', () => {
                         body.style.display = 'none';
                         edit_btn.style.display = 'none';
@@ -158,10 +168,17 @@ function timeline(url) {
                         edit_body.innerHTML = `${element.body}`;
                         body_div.appendChild(edit_body);
 
+                        // <button class="btn btn-primary save-btn">SAVE</button> SAVE BUTTON
                         const save_btn = document.createElement("button");
                         save_btn.className = "btn btn-primary save-btn";
                         save_btn.innerHTML = "SAVE";
                         body_div.appendChild(save_btn);
+
+                        // Upon clicking:
+                        // - get the new body contents
+                        // - send them to the server using edit_post function
+                        // - replace old contents with new
+                        // - hide the new body  and save button, display the edit button and new body contents
                         save_btn.addEventListener('click', () => {
                             const edited_body = edit_body.value;
                             edit_post(element.id, edited_body);
@@ -228,11 +245,8 @@ function timeline(url) {
                 }
 
                 edit_like.appendChild(like_col);
-
-                post_div.append(edit_like);
-
+                post_div.appendChild(edit_like);
                 document.querySelector("#timeline-feed").append(post_div);
-                console.log(currentPage);
             }
         }
         displayPosts(data["posts_data"]);
@@ -321,6 +335,7 @@ function timeline(url) {
     });     
 }
 
+// Changes the follow/unfollow button
 function following_switch() {
     const following_check = document.querySelector("#following-check").dataset.following;
     console.log(following_check);
@@ -391,17 +406,19 @@ function new_post() {
     document.querySelector("#new-post-form").onsubmit = (event) => {
         event.preventDefault();
 
-        const csrfTokenInput = document.getElementsByName('csrfmiddlewaretoken')[0];
-        const csrfToken = csrfTokenInput.value;
+        // Get the csrf token using local function
+        const csrftoken = getCsrf('csrftoken');
 
+        // Obtain the contents of the textarea HTML tag
         const textareaElement = document.querySelector("#new-post-body");
         const body = textareaElement.value;
 
+        // Connect with new_post route and send data to the server
         fetch("new_post", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "X-CSRFToken": csrfToken
+                "X-CSRFToken": csrftoken
             },
             body: JSON.stringify({ body: body }),
         })

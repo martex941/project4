@@ -25,3 +25,6 @@ class Like(models.Model):
 class Follow(models.Model):
     follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name="follower", default="")
     followee = models.ForeignKey(User, on_delete=models.CASCADE, related_name="followee", default="")
+
+    def __str__(self):
+        return f"{self.follower} is following {self.followee}"
