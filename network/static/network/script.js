@@ -141,7 +141,7 @@ function timeline(url) {
                 timestamp_likes.appendChild(likes_amount);
                 post_div.append(timestamp_likes);
 
-                // <div class="col"> EDIT BUTTON AND LIKE BUTTON COLUMN
+                // <div class="row"> EDIT BUTTON AND LIKE BUTTON COLUMN
                 const edit_like = document.createElement("div");
                 edit_like.className = 'row';
 
@@ -194,7 +194,7 @@ function timeline(url) {
 
                 // <div class="col"> LIKE BUTTON COLUMN
                 const like_col = document.createElement("div");
-                like_col.className = 'col';
+                like_col.className = 'col like-unlike';
 
                 // <button class="btn btn-primary like-btn" id="like-btn">Like</button>
                 function create_like_btn() {
@@ -219,7 +219,7 @@ function timeline(url) {
                 // <button class="btn btn-secondary unlike-btn" id="unlike-btn">Unlike</button>
                 function create_unlike_btn() {
                     const unlike_btn = document.createElement("button");
-                    unlike_btn.className = 'btn btn-secondary yunlike-btn';
+                    unlike_btn.className = 'btn btn-secondary unlike-btn';
                     unlike_btn.id = 'unlike-btn';
                     unlike_btn.innerHTML = "Unlike";
                     like_col.appendChild(unlike_btn);
@@ -330,7 +330,12 @@ function timeline(url) {
 
             document.querySelector("#timeline-feed").append(navDiv);
         }
-        displayPageNav();
+        if (data["posts_data"].length < 10) {
+            // do nothing
+        }
+        else {
+            displayPageNav();
+        }
 
     });     
 }

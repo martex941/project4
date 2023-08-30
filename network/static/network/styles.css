@@ -45,8 +45,10 @@ form {
     justify-content: end;
 }
 
-.like-btn, .unlike-btn {
+.col.like-unlike{
     margin-left: 0.5rem;
+    display: flex;
+    justify-content: end;
 }
 
 textarea {
@@ -67,4 +69,8 @@ textarea {
     .nav-item {
         margin-left: 1rem;
     }
+}
+
+.pagination li:hover {
+    cursor: pointer;
 }
